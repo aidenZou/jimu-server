@@ -16,6 +16,7 @@ import {
   Max,
   ValidateIf,
   IsUrl,
+  IsObject,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
@@ -196,4 +197,123 @@ export class UserUpdateDto {
   @ValidateIf((value) => value === undefined)
   @IsInt()
   readonly sex?: number;
+}
+
+export class CreateAccountsDto {
+  @ApiProperty({ description: '用户标示', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly identifier: string;
+
+  @ApiProperty({ description: '应用', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly application: string;
+
+  @ApiProperty({ description: '应用', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly loginType: string;
+
+  @ApiProperty({
+    description: '详情描述',
+    type: Object,
+    required: false,
+  })
+  @ValidateIf((value) => value === undefined)
+  @IsObject()
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  readonly details?: object;
+}
+
+export class CreateUserDto {
+  @ApiProperty({ description: '用户名称', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly name: string;
+
+  @ApiProperty({ description: '用户密码', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly password: string;
+
+  @ApiProperty({ description: '用户生日', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly avatar: string;
+
+  @ApiProperty({ description: '性别', type: Number, required: true })
+  @IsInt()
+  @IsNotEmpty()
+  readonly sex: number;
+
+  @ApiProperty({ description: '渠道', type: String, required: true })
+  @ValidateIf((value) => value === undefined)
+  @IsString()
+  @IsNotEmpty()
+  readonly channel?: string;
+
+  @ApiProperty({ description: '设备', type: String, required: true })
+  @ValidateIf((value) => value === undefined)
+  @IsString()
+  @IsNotEmpty()
+  readonly deviceid?: string;
+}
+export class CreateAccountsUserDto {
+  @ApiProperty({ description: '用户名称', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly name: string;
+
+  @ApiProperty({ description: '用户密码', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly password: string;
+
+  @ApiProperty({ description: '用户生日', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly avatar: string;
+
+  @ApiProperty({ description: '性别', type: Number, required: true })
+  @IsInt()
+  @IsNotEmpty()
+  readonly sex: number;
+
+  @ApiProperty({ description: '渠道', type: String, required: true })
+  @ValidateIf((value) => value === undefined)
+  @IsString()
+  @IsNotEmpty()
+  readonly channel?: string;
+
+  @ApiProperty({ description: '设备', type: String, required: true })
+  @ValidateIf((value) => value === undefined)
+  @IsString()
+  @IsNotEmpty()
+  readonly deviceid?: string;
+
+  @ApiProperty({ description: '用户标示', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly identifier: string;
+
+  @ApiProperty({ description: '应用', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly application: string;
+
+  @ApiProperty({ description: '应用', type: String, required: true })
+  @IsString()
+  @IsNotEmpty()
+  readonly loginType: string;
+
+  @ApiProperty({
+    description: '详情描述',
+    type: Object,
+    required: false,
+  })
+  @ValidateIf((value) => value === undefined)
+  @IsObject()
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  readonly details?: object;
 }

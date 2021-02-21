@@ -29,6 +29,9 @@ import {
   UsersModelIdDto,
   TokenUserInfo,
   UsersFindOneByIdentifierDto,
+  CreateUserDto,
+  CreateAccountsDto,
+  CreateAccountsUserDto,
 } from './users.dto';
 import { JwtAuthGuard } from 'src/common/auth/jwt-auth.guard';
 
@@ -36,6 +39,19 @@ import { JwtAuthGuard } from 'src/common/auth/jwt-auth.guard';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: '创建用户' })
+  @ApiResponse({
+    status: 201,
+    description: '创建用户',
+  })
+  @Header('Cache-Control', 'private, max-age=120')
+  register(@Body() createAccountsUserDto: CreateAccountsUserDto) {
+    return this.usersService.create(createAccountsUserDto);
+  }
 
   @Get()
   @ApiBearerAuth()

@@ -11,6 +11,9 @@ import {
   UpsertTdo,
   UsersFindOneByIdentifierDto,
   UserUpdateDto,
+  CreateUserDto,
+  CreateAccountsDto,
+  CreateAccountsUserDto,
 } from './users.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { Accounts, Users } from '@prisma/client';
@@ -20,6 +23,37 @@ import * as moment from 'moment';
 @Injectable()
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
+
+  async create(params: CreateAccountsUserDto): Promise<Users> {
+    return this.prismaService.accounts
+      .create({
+        data: {
+          identifier: params.identifier,
+          loginType: params.loginType,
+          application: params.application,
+          details: params?.details || {},
+          Users: {
+            create: {
+              name: params.name,
+              avatar: params.avatar,
+              sex: params.sex,
+              password: params.password,
+            },
+          },
+        },
+        select: {
+          Users: true,
+        },
+      })
+      .then((res) => {
+        return res.Users;
+      })
+      .catch((err) => {
+        // console.log('err :>> ', err);
+        throw new BadRequestException('创建失败');
+      });
+  }
+
   async findAll() {
     return this.prismaService.users.findMany();
   }
@@ -53,10 +87,10 @@ export class UsersService {
     }
   }
 
-  async remove(id: number): Promise<void> {
-    // const user = await this.findOne(id);
-    // await user.destroy();
-  }
+  // async remove(id: number): Promise<void> {
+  //   // const user = await this.findOne(id);
+  //   // await user.destroy();
+  // }
 
   async upsert(data: UpsertTdo): Promise<Accounts> {
     // 查询是否存在账号
