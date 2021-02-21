@@ -2,9 +2,11 @@ version: '3'
 
 services:
   cli:
-    image: nestjs/cli
+    image: node:${NODE_VERSION}
+    command: npm config set registry https://registry.npm.taobao.org
+    command: npm i -g @nestjs/cli cnpm
     volumes:
-      - ./:/workspace
+      - ./app:/workspace
     tty: true
   nest:
     image: node:${NODE_VERSION}
@@ -12,7 +14,7 @@ services:
     command: npm config set registry https://registry.npm.taobao.org
     command: npm run start:dev
     volumes:
-      - ./app:/home/node/app
+      - ./:/home/node/app
     ports:
       - ${APP_PORT}:3000
   mysql:

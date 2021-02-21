@@ -36,6 +36,7 @@ lerna-debug.log*
 # ENV
 /env/development.env
 # /env/test.env
+.env
 
 # CONFIG
 /config/mysql/data
