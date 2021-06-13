@@ -17,7 +17,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Access, AccessRole, Roles } from '@prisma/client';
-import { TokenUserInfo } from 'src/users/users.dto';
+import { TokenUserInfo } from '../../users/users.dto';
 import { Visiter } from '../decorator/user.decorator';
 import { RolesGuard } from '../guard/roles.guard';
 import {

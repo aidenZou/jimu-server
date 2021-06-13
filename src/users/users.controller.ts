@@ -80,7 +80,7 @@ export class UsersController {
     @Query() usersIdDto: UsersModelIdDto,
   ): Promise<Users> {
     console.log('user :>> ', user);
-    return this.usersService.findOne(usersIdDto);
+    return this.usersService.findFirst(usersIdDto);
   }
 
   @Get('/find/:identifier')

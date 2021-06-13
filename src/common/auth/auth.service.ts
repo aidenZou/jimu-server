@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/common/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Access, AccessRole, Roles, UserRole, Users } from '@prisma/client';
 import {
   CreateAccessRolesDto,

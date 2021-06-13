@@ -58,9 +58,9 @@ export class UsersService {
     return this.prismaService.users.findMany();
   }
 
-  async findOne(usersModelIdDto: UsersModelIdDto): Promise<Users> {
+  async findFirst(usersModelIdDto: UsersModelIdDto): Promise<Users> {
     try {
-      const res = await this.prismaService.users.findOne({
+      const res = await this.prismaService.users.findFirst({
         where: {
           id: usersModelIdDto.id,
         },
@@ -73,7 +73,7 @@ export class UsersService {
 
   async findByIdentifier(param: ValidateUserDto): Promise<Users> {
     try {
-      const res = await this.prismaService.accounts.findOne({
+      const res = await this.prismaService.accounts.findFirst({
         where: {
           identifier: param.identifier,
         },

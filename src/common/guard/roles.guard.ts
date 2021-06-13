@@ -4,7 +4,7 @@ import {
   ExecutionContext,
   Inject,
 } from '@nestjs/common';
-import { AuthService } from 'src/common/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
