@@ -32,3 +32,11 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# ENV
+/env/development.env
+# /env/test.env
+.env
+
+# CONFIG
+/config/mysql/data
