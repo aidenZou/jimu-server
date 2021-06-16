@@ -99,3 +99,10 @@ export class PagesIdDto {
   @Transform(({ value }) => parseInt(value))
   readonly userId: number;
 }
+
+export class PlatformTypeDto {
+  @ApiProperty({ description: 'type', enum: PaltformType, required: false })
+  @IsOptional()
+  @IsEnum(PaltformType)
+  readonly type?: PaltformType;
+}

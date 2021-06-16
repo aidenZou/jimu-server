@@ -19,7 +19,12 @@ import { Pages } from '@prisma/client';
 import { JwtAuthGuard } from '../common/auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guard/roles.guard';
 import { DataBaseId } from '../common/dto/custom.dto';
-import { PageCreateDto, PagesIdDto, PagesPutRequstBodyDto } from './pages.dto';
+import {
+  PageCreateDto,
+  PagesIdDto,
+  PagesPutRequstBodyDto,
+  PlatformTypeDto,
+} from './pages.dto';
 import { PagesService } from './pages.service';
 import { Visiter } from '../common/decorator/user.decorator';
 import { TokenUserInfo } from '../users/users.dto';
@@ -35,6 +40,7 @@ export class PagesController {
     status: 200,
     description: '管理员接口 获取所有pages',
   })
+  @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   //   @Header('Cache-Control', 'private, max-age=60')
@@ -51,8 +57,11 @@ export class PagesController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   //   @Header('Cache-Control', 'private, max-age=60')
-  getByUser(@Visiter() tokenUserInfo: TokenUserInfo): Promise<Pages[]> {
-    return this.pagesService.getAllByUser(tokenUserInfo);
+  getByUser(
+    @Visiter() tokenUserInfo: TokenUserInfo,
+    @Param() param: PlatformTypeDto,
+  ): Promise<Pages[]> {
+    return this.pagesService.getAllByUser(tokenUserInfo, param);
   }
 
   @Post()
@@ -68,7 +77,6 @@ export class PagesController {
     @Visiter() tokenUserInfo: TokenUserInfo,
     @Body() body: PageCreateDto,
   ): Promise<Pages> {
-    console.log('body :>> ', body);
     return this.pagesService.create(tokenUserInfo, body);
   }
 
@@ -100,12 +108,14 @@ export class PagesController {
     return this.pagesService.findOne(param);
   }
 
-  @Put(':pageId')
+  @Put('/:userId/:pageId')
   @ApiOperation({ summary: '通用接口 更新page页数据' })
   @ApiResponse({
     status: 200,
     description: '更新page页数据',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   //   @Header('Cache-Control', 'private, max-age=60')
   put(
     @Param() param: PagesIdDto,
@@ -120,6 +130,9 @@ export class PagesController {
     status: 200,
     description: '删除pages数据',
   })
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   //   @Header('Cache-Control', 'private, max-age=60')
   del(@Param() param: DataBaseId): Promise<Pages> {
     return this.pagesService.delete(param);

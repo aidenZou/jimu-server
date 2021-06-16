@@ -49,7 +49,6 @@ export class UsersService {
         return res.Users;
       })
       .catch((err) => {
-        // console.log('err :>> ', err);
         throw new BadRequestException('创建失败');
       });
   }

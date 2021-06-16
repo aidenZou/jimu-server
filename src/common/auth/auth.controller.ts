@@ -29,6 +29,7 @@ import {
   IdDto,
   CreateAccessDto,
   UpdateAccessDto,
+  UsersAccountLoginDto,
 } from './auth.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -38,7 +39,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/user/login')
-  @ApiOperation({ summary: '登录' })
+  @ApiOperation({ summary: '手机号登录' })
   @ApiResponse({
     status: 200,
     description: '登录',
@@ -46,6 +47,17 @@ export class AuthController {
   @Header('Cache-Control', 'private, max-age=60')
   smslogin(@Body() usersLoginDto: UsersLoginDto) {
     // return this.authService.smslogin(usersLoginDto);
+  }
+
+  @Post('/identifier/login')
+  @ApiOperation({ summary: '账号登录' })
+  @ApiResponse({
+    status: 200,
+    description: '账号登录',
+  })
+  @Header('Cache-Control', 'private, max-age=60')
+  accountlogin(@Body() usersAccountLoginDto: UsersAccountLoginDto) {
+    return this.authService.accountlogin(usersAccountLoginDto);
   }
 
   @Get('/roles')

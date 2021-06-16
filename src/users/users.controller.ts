@@ -63,7 +63,6 @@ export class UsersController {
   })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getAll(@Req() req: Request) {
-    // console.log(req.user)
     return this.usersService.findAll();
   }
 
@@ -79,7 +78,6 @@ export class UsersController {
     @Visiter() user: TokenUserInfo,
     @Query() usersIdDto: UsersModelIdDto,
   ): Promise<Users> {
-    console.log('user :>> ', user);
     return this.usersService.findFirst(usersIdDto);
   }
 

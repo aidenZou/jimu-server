@@ -11,7 +11,7 @@ export class DataBaseId {
   @ApiProperty({ description: '数据库索引id', type: String, required: true })
   @IsPositive()
   @Transform(({ value, key, obj, type }) => {
-    console.log('xxxxx DataBaseId', { value, key, obj, type });
+    // console.log('xxxxx DataBaseId', { value, key, obj, type });
     return parseInt(value);
   })
   readonly id: number;

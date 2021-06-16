@@ -3,20 +3,45 @@ import { Pages } from '@prisma/client';
 import { DataBaseId } from '../common/dto/custom.dto';
 import { PrismaService } from '../common/prisma/prisma.service';
 import { TokenUserInfo } from '../users/users.dto';
-import { PageCreateDto, PagesIdDto } from './pages.dto';
+import { PageCreateDto, PagesIdDto, PlatformTypeDto } from './pages.dto';
 
 @Injectable()
 export class PagesService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getAll(): Promise<Pages[]> {
-    return this.prismaService.pages.findMany();
+    return this.prismaService.pages.findMany({
+      select: {
+        id: true,
+        pageId: true,
+        title: true,
+        createdAt: true,
+        updatedAt: true,
+        type: true,
+        tags: true,
+        PagesData: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+        Application: true,
+        Users: true,
+        userId: true,
+        status: true,
+        applicationId: true,
+      },
+    });
   }
 
-  async getAllByUser(tokenUserInfo: TokenUserInfo): Promise<Pages[]> {
+  async getAllByUser(
+    tokenUserInfo: TokenUserInfo,
+    param: PlatformTypeDto,
+  ): Promise<Pages[]> {
     return this.prismaService.pages.findMany({
       where: {
         userId: tokenUserInfo.id,
+        type: param.type,
       },
     });
   }
@@ -49,15 +74,15 @@ export class PagesService {
       },
     };
 
-    // if (params.tagId && params.tagId.length) {
-    //   ele.data['tags'] = {
-    //     connect: params.tagId.map((v: number) => {
-    //       return {
-    //         tagId: v,
-    //       };
-    //     }),
-    //   };
-    // }
+    if (params.tagId && params.tagId.length) {
+      ele.data['tags'] = {
+        connect: params.tagId.map((v: number) => {
+          return {
+            tagId: v,
+          };
+        }),
+      };
+    }
 
     try {
       return this.prismaService.pages.create(ele);
@@ -104,11 +129,22 @@ export class PagesService {
     });
   }
 
-  delete(dataBaseId: DataBaseId): Promise<Pages> {
-    return this.prismaService.pages.delete({
-      where: {
-        id: dataBaseId.id,
-      },
-    });
+  async delete(dataBaseId: DataBaseId): Promise<Pages> {
+    try {
+      await this.prismaService.pagesData.deleteMany({
+        where: {
+          Pages: {
+            id: dataBaseId.id,
+          },
+        },
+      });
+      return this.prismaService.pages.delete({
+        where: {
+          id: dataBaseId.id,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException('删除失败');
+    }
   }
 }

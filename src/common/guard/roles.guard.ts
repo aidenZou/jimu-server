@@ -23,7 +23,7 @@ export class RolesGuard implements CanActivate {
     // console.log("user :>> ", user);
     // TODO: 验证是否存在权限
     const hasRole = await this.authService.hasRoles(user.id, method, router);
-    console.log('hasRole :>> ', hasRole);
+    // console.log('hasRole :>> ', hasRole);
     return hasRole;
   }
 }

@@ -13,6 +13,7 @@ import {
   IdDto,
   CreateAccessDto,
   UpdateAccessDto,
+  UsersAccountLoginDto,
 } from './auth.dto';
 import { ConfigService } from '@nestjs/config';
 
@@ -26,12 +27,27 @@ export class AuthService {
   ) {}
 
   async validateUser(param: ValidateUserDto): Promise<any> {
-    console.log('identifier :>> ', param.identifier);
     const user = await this.usersService.findByIdentifier(param);
     if (user) {
       return user;
     }
     return null;
+  }
+
+  async accountlogin(param: UsersAccountLoginDto): Promise<string> {
+    try {
+      const res = await this.prismaService.accounts.findFirst({
+        where: {
+          identifier: param.identifier,
+        },
+        include: {
+          Users: true,
+        },
+      });
+      return this.getAccessToken(res.Users);
+    } catch (error) {
+      throw new BadRequestException('查询失败');
+    }
   }
 
   async getAccessToken(user: Users): Promise<string> {
@@ -60,7 +76,7 @@ export class AuthService {
         },
       },
     });
-    console.log('hasRole :>> ', hasRole);
+    // console.log('hasRole :>> ', hasRole);
     const status = Boolean(hasRole);
     return status;
   }
@@ -88,7 +104,6 @@ export class AuthService {
 
   async roles(): Promise<Roles[]> {
     return this.prismaService.roles.findMany().catch((err) => {
-      console.log('err :>> ', err);
       throw new BadRequestException('查询失败！');
     });
   }
@@ -121,7 +136,6 @@ export class AuthService {
     });
 
     return Promise.all(PromiseQueue).catch((err) => {
-      console.log('err :>> ', err);
       throw new BadRequestException('创建资源失败！');
     });
   }
@@ -154,7 +168,6 @@ export class AuthService {
         data: updateAccessDto,
       })
       .catch((err) => {
-        console.log('err :>> ', err);
         throw new BadRequestException('更新资源失败！');
       });
   }

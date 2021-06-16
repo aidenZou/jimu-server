@@ -26,6 +26,22 @@ export class UsersMbileDto {
   readonly mobile: string;
 }
 
+export class UsersAccountLoginDto {
+  @ApiProperty({
+    description: '用户账号唯一标识',
+    type: String,
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly identifier: string;
+
+  @ApiProperty({ description: '用户密码', type: String, required: true })
+  @IsNumberString()
+  @MinLength(9)
+  @MaxLength(100)
+  readonly password: string;
+}
 export class UsersLoginDto {
   @ApiProperty({ description: '用户手机号', type: String, required: true })
   @IsMobilePhone('zh-CN')
