@@ -1,0 +1,178 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 角色表
+model Roles {
+  id         Int          @id @default(autoincrement())
+  name       String
+  level      Int
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  UserRole   UserRole[]
+  AccessRole AccessRole[]
+
+  @@index([level])
+}
+
+enum PaltformType {
+  PC
+  H5
+}
+
+model Tags {
+  id        Int      @id @default(autoincrement())
+  tagId     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Pages     Pages?   @relation(fields: [pagesId], references: [id])
+  pagesId   Int?
+}
+
+model Application {
+  id            Int          @id @default(autoincrement())
+  applicationId String       @unique
+  title         String
+  name          String
+  type          PaltformType
+  pages         Pages[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  userId        Int
+  Users         Users        @relation(fields: [userId], references: [id])
+}
+
+model Pages {
+  id            Int          @id @default(autoincrement())
+  pageId        String       @unique
+  title         String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  userId        Int
+  Users         Users        @relation(fields: [userId], references: [id])
+  status        Boolean      @default(true) // true show && false hide
+  type          PaltformType
+  tags          Tags[]
+  PagesData     PagesData[]
+  Application   Application? @relation(fields: [applicationId], references: [id])
+  applicationId Int?
+}
+
+model PagesData {
+  id        Int      @id @default(autoincrement())
+  pagesId   String
+  Pages     Pages    @relation(fields: [pagesId], references: [pageId])
+  data      Json
+  version   String //框架版本
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  Users     Users    @relation(fields: [userId], references: [id])
+  main      Boolean  @default(false) // true show && false hide // 是否主版本
+}
+
+// 用户表
+model Users {
+  id        Int      @id @default(autoincrement())
+  sex       Int
+  name      String
+  avatar    String
+  password  String   @default("2ETIPWZa1R4+LJRW3nahQw==")
+  channel   String?
+  deviceid  String?
+  status    Boolean  @default(false) // true canuse && false not
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Accounts      Accounts[]
+  UserRole      UserRole[]
+  AuditRbacLogs AuditRbacLogs[]
+  Pages         Pages[]
+  PagesData     PagesData[]
+  Application   Application[]
+}
+
+// 用户角色表
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  Users     Users    @relation(fields: [userId], references: [id])
+  roleId    Int
+  Roles     Roles    @relation(fields: [roleId], references: [id])
+  status    Boolean  @default(true) // true hasrole && false no roles
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+// 账号表
+model Access {
+  id         Int          @id @default(autoincrement())
+  name       String
+  level      Int
+  api        String
+  method     String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  AccessRole AccessRole[]
+
+  @@index([level])
+  @@index([api])
+  @@index([method])
+}
+
+// 角色权限表
+model AccessRole {
+  id        Int      @id @default(autoincrement())
+  roleId    Int
+  Roles     Roles    @relation(fields: [roleId], references: [id])
+  accessId  Int
+  Access    Access   @relation(fields: [accessId], references: [id])
+  status    Boolean  @default(false) // true hasrole && false no roles
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+// 审计日志表
+model AuditRbacLogs {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  Users     Users    @relation(fields: [userId], references: [id])
+  type      Int //操作类型 1: 对权限, 2: 对角色
+  method    Int // 操作: 1: 添加, 2: 修改, 3: 删除, 4: 初始化
+  before    Json //操作前
+  after     Json //操作后
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// loginType 三方登陆 email wechat ali sina qq mobile
+// identifier 唯一标示符
+// application 应用程序（注册）
+model Accounts {
+  id          Int      @id @default(autoincrement())
+  loginType   String
+  identifier  String   @unique
+  application String
+  details     Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      Int
+  Users       Users    @relation(fields: [userId], references: [id])
+
+  @@index([loginType])
+  @@index([identifier])
+  @@index([application])
+}
